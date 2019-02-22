@@ -17,10 +17,17 @@ fi
 choices=`dialog --stdout --checklist "Choose Which Packages You Install:" 25 60 17 ${pkglist[@]}`
 if [ $? -eq 0 ]
 then
+notInstalledPkgs=()
         for choice in $choices
         do
-                echo "You chose: $choice"
+		if pacman -Qs $choice > /dev/null ; then
+		  echo "The package $choice is installed"
+		else
+		  echo "The package $choice is not installed"
+		  notInstalledPkgs+=" "$choice
+		fi
         done
+sudo pacman -S $notInstalledPkgs
 else
         echo cancel selected
 fi
